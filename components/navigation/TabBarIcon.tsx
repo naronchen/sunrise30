@@ -3,7 +3,30 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { type IconProps } from '@expo/vector-icons/build/createIconSet';
 import { type ComponentProps } from 'react';
+import { opacity } from 'react-native-reanimated/lib/typescript/reanimated2/Colors';
 
-export function TabBarIcon({ style, ...rest }: IconProps<ComponentProps<typeof Ionicons>['name']>) {
-  return <Ionicons size={28} style={[{ marginBottom: -3 }, style]} {...rest} />;
+type TabBarIconProps = IconProps<ComponentProps<typeof Ionicons>['name']> & {
+  focused: boolean;  
+};
+
+export function TabBarIcon({ focused, style, ...rest }: TabBarIconProps) {
+  return (
+    <Ionicons 
+      size={33} 
+      style={
+        [
+          { marginBottom: -3 }, 
+          focused ? focusedShadowStyle : {},
+          style
+        ]} 
+        {...rest} 
+    />
+  );
 }
+
+const focusedShadowStyle = {
+  textShadowColor: '#000',
+  opacity: 0.8,
+  textShadowOffset: { width: 0, height: 0.8 },
+  textShadowRadius: 0.8,
+};

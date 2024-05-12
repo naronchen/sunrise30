@@ -1,8 +1,9 @@
 import React from 'react'
 import { Text } from 'react-native';
 
-export default function dayView() {
+
+export default function calendar() {
   return (
-    <Text>dayView</Text>
+    <Text>calendar</Text>
   )
 }

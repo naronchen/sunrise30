@@ -1,8 +1,8 @@
 import React from 'react'
 import { Text } from 'react-native';
 
-export default function dayView() {
+export default function settings() {
   return (
-    <Text>dayView</Text>
+    <Text>settings</Text>
   )
 }

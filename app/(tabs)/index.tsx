@@ -30,7 +30,6 @@ export default function dayView() {
           onToggle={() => handleToggle(index)}
         />
       ))}
-      <Text>dayView</Text>
     </MainView>
   )
 }

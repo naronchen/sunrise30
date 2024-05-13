@@ -3,7 +3,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { type IconProps } from '@expo/vector-icons/build/createIconSet';
 import { type ComponentProps } from 'react';
-import { opacity } from 'react-native-reanimated/lib/typescript/reanimated2/Colors';
 
 type TabBarIconProps = IconProps<ComponentProps<typeof Ionicons>['name']> & {
   focused: boolean;  

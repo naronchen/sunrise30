@@ -19,11 +19,13 @@ export default function MainView({ title, children, style }: MainViewProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 40,
+    paddingVertical: 40,
   },
   title: {
     fontSize: 35,
     fontWeight: 'bold',
-    marginVertical: 30,
+    marginVertical: 25,
+    marginLeft: 30,
   }
 });
+// todo: just center things

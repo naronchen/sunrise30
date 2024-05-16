@@ -1,6 +1,7 @@
 import React from 'react'
-import { Text, View, Switch, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, Pressable, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Press } from 'hammerjs';
 
 
 type CheckBoxProps = {
@@ -11,28 +12,37 @@ type CheckBoxProps = {
 
 export default function CheckBox({label, checked, onToggle}: CheckBoxProps){
   return (
-    <View style={styles.container}>
-        <TouchableOpacity onPress={onToggle} style={styles.iconContainer}>
+    <Pressable 
+        
+        onPress={onToggle} 
+        style={({ pressed }) => [
+            styles.container,
+            { opacity: pressed ? 0.5 : 1 }
+            ]} 
+    >
+        <View style={styles.iconTextContainer}>
             <Ionicons 
-                size={24}
+                size={28}
                 name={checked ? 'checkbox' : 'square-outline'}
+                color={checked? '#66C2E9' : '#000'}
             />
                 <Text style={styles.label}>{label}</Text>
-        </TouchableOpacity>
-    </View>
+        </View>
+    </Pressable>
   )
 }
 
 const styles = StyleSheet.create({
     container: { 
-      marginBottom: 10       
+       paddingVertical: 15,      
     },
-    iconContainer: {
+    iconTextContainer: {
       flexDirection: 'row', 
       marginRight: 10,    
+      marginLeft: 30,
     },
     label: {
         marginLeft: 10,
-      fontSize: 20,          
+      fontSize: 22,          
     }
   });

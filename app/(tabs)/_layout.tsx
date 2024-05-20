@@ -16,6 +16,19 @@ export default function TabLayout() {
         }}
     >
         <Tabs.Screen
+            name="settings"
+            options={{
+                title: '',
+                tabBarIcon: ({focused}) => (
+                    <TabBarIcon 
+                        name='person-circle' 
+                        focused={focused}
+                    />
+                )
+            }}
+        />
+
+        <Tabs.Screen
             name="index"
             options={{
                 title: '',
@@ -35,19 +48,6 @@ export default function TabLayout() {
                 tabBarIcon: ({focused}) => (
                     <TabBarIcon 
                         name='calendar-outline' 
-                        focused={focused}
-                    />
-                )
-            }}
-        />
-
-        <Tabs.Screen
-            name="settings"
-            options={{
-                title: '',
-                tabBarIcon: ({focused}) => (
-                    <TabBarIcon 
-                        name='settings-outline' 
                         focused={focused}
                     />
                 )

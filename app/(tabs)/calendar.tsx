@@ -5,10 +5,20 @@ import MainView from '@/components/container/MainView';
 
 export default function calendar() {
   return (
-    <MainView title="Calendar">
+    <MainView title="" style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
         <Calendar />
       </SafeAreaView>
     </MainView>
       )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'black',
+    },
+});

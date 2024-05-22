@@ -1,25 +1,30 @@
-import { useState, useEffect } from "react";
-import supabase from "@/components/supabase";
+import { useState, useEffect } from 'react';
+import supabase from '@/components/supabase'; // Ensure this path matches your Supabase client setup
 
 export default function useAuthStatus() {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        async function fetchUser() {
-            const { data: sessionData, error } = await supabase.auth.getSession();
+        // Initially check if there is a current session and set the user
+        checkSession();
 
-            if (error) {
-                console.error('Error fetching user:', error);
-                return;
+        // Subscribe to auth changes
+        const { data: authListener } = supabase.auth.onAuthStateChange(
+            async (event, session) => {
+                setUser(session?.user ?? null);
             }
+        );
 
-            if (sessionData?.session) {
-                setUser(sessionData.session.user);
-            }
-        }
+        // Cleanup subscription on component unmount
+        return () => {
+            authListener.unsubscribe();
+        };
+    }, []);
 
-        fetchUser();
-    }, []); // Empty dependency array ensures this runs only once on mount
+    async function checkSession() {
+        const { data: session } = await supabase.auth.getSession();
+        setUser(session?.user ?? null);
+    }
 
     return user;
 }

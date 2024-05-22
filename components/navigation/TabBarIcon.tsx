@@ -26,6 +26,6 @@ export function TabBarIcon({ focused, style, ...rest }: TabBarIconProps) {
 const focusedShadowStyle = {
   textShadowColor: '#000',
   opacity: 0.8,
-  textShadowOffset: { width: 0, height: 1 },
-  textShadowRadius: 3,
+  textShadowOffset: { width: 0, height: 0.8 },
+  textShadowRadius: 2,
 };

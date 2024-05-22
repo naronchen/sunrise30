@@ -1,9 +1,17 @@
 import React from 'react'
 import { Tabs } from 'expo-router';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-
+import useAuthStatus from '@/hooks/useAuthStatus';
+import AuthPage from '../AuthPage';
 
 export default function TabLayout() {
+    const user  = useAuthStatus();
+
+    // if authStatus is null, return the authpage
+    if (!user) {
+        return <AuthPage />;
+    }
+
   return (
     <Tabs
         screenOptions={{
@@ -15,19 +23,6 @@ export default function TabLayout() {
             }
         }}
     >
-        <Tabs.Screen
-            name="settings"
-            options={{
-                title: '',
-                tabBarIcon: ({focused}) => (
-                    <TabBarIcon 
-                        name='person-circle' 
-                        focused={focused}
-                    />
-                )
-            }}
-        />
-
         <Tabs.Screen
             name="index"
             options={{
@@ -48,6 +43,19 @@ export default function TabLayout() {
                 tabBarIcon: ({focused}) => (
                     <TabBarIcon 
                         name='calendar-outline' 
+                        focused={focused}
+                    />
+                )
+            }}
+        />
+
+        <Tabs.Screen
+            name="settings"
+            options={{
+                title: '',
+                tabBarIcon: ({focused}) => (
+                    <TabBarIcon 
+                        name='person-circle' 
                         focused={focused}
                     />
                 )

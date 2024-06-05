@@ -1,7 +1,7 @@
 import { tsNamedTupleMember } from '@babel/types';
 import { join } from 'path';
 import React from 'react'
-import { Text, View, StyleSheet,Dimensions, Image } from 'react-native';
+import { Text, View, StyleSheet,Dimensions, Image, Button } from 'react-native';
 import RectangularProgressBar from '@/components/progressBar';
 
 const profileMockObject = {
@@ -55,7 +55,7 @@ export default function settings() {
           {/* <Text>{(profileMockObject.completedDays / 30 * 100).toFixed(2)}%</Text> */}
         </View>
       </View>
-
+      A log out button here
     </View>
   )
 }

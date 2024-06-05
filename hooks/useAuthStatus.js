@@ -17,7 +17,7 @@ export default function useAuthStatus() {
 
         // Cleanup subscription on component unmount
         return () => {
-            authListener.unsubscribe();
+            authListener.subscription.unsubscribe();
         };
     }, []);
 

@@ -46,8 +46,11 @@ export default function AuthPage() {
         style={styles.input}
         secureTextEntry
       />
-      <Button title={loading ? "Loading..." : "Log In"} onPress={handleLogin} disabled={loading} />
-      <Button title={loading ? "Loading..." : "Sign Up"} onPress={handleSignup} disabled={loading} />
+      <View style={styles.buttonContainer} >
+        <Button title={loading ? "Loading..." : "Log In"} onPress={handleLogin} disabled={loading} />
+        <Button title={loading ? "Loading..." : "Sign Up"} onPress={handleSignup} disabled={loading} />
+      </View>
+  
     </View>
   );
 }
@@ -70,5 +73,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     marginBottom: 20
+  },
+
+  buttonContainer: {
+    gap: 10,
   }
 });

@@ -1,56 +1,33 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-import supabase from '@/components/supabase'; // Adjust the import path according to your setup
+import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import LoginPage from './LoginPage';
+import SignupPage from './SignupPage';
 
-export default function AuthPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+const AuthPage: React.FC = () => {
+  const [activePage, setActivePage] = useState<'login' | 'signup'>('login');
 
-  const handleLogin = async () => {
-    setLoading(true);
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-    setLoading(false);
-    if (error) alert(error.message);
-    // else alert('Logged in!');
-  };
-
-  const handleSignup = async () => {
-    setLoading(true);
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password
-    });
-    setLoading(false);
-    if (error) alert(error.message);
-    else alert('Sign up successful, check your email to confirm!');
+  const handleToggle = (page: 'login' | 'signup') => {
+    setActivePage(page);
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Auth Page</Text>
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        style={styles.input}
-        autoCapitalize="none"
-      />
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        style={styles.input}
-        secureTextEntry
-      />
-      <View style={styles.buttonContainer} >
-        <Button title={loading ? "Loading..." : "Log In"} onPress={handleLogin} disabled={loading} />
-        <Button title={loading ? "Loading..." : "Sign Up"} onPress={handleSignup} disabled={loading} />
+      <Text style={styles.title}>{activePage === 'login' ? 'LogIn' : 'SignUp'}</Text>
+      <View style={styles.buttonContainer}>
+      <TouchableOpacity
+          style={[styles.button, activePage === 'login' ? styles.buttonActive : styles.buttonInactive]}
+          onPress={() => handleToggle('login')}
+        >
+          <Text style={activePage === 'login' ? styles.textActive : styles.textInactive}>Log In</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, activePage === 'signup' ? styles.buttonActive : styles.buttonInactive]}
+          onPress={() => handleToggle('signup')}
+        >
+          <Text style={activePage === 'signup' ? styles.textActive : styles.textInactive}>Sign Up</Text>
+        </TouchableOpacity>
       </View>
-  
+      {activePage === 'login' ? <LoginPage /> : <SignupPage />}
     </View>
   );
 }
@@ -60,22 +37,35 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20
-  },
-  input: {
-    width: '100%',
-    marginVertical: 10,
-    padding: 15,
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 5
   },
   title: {
     fontSize: 24,
-    marginBottom: 20
+    marginBottom: 20,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    marginBottom: 20,
+
   },
 
-  buttonContainer: {
-    gap: 10,
-  }
+  button: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  buttonActive: {
+    backgroundColor: '#FFC72E',
+  },
+  buttonInactive: {
+    borderWidth: 1,
+    borderColor: 'lightgrey',
+    backgroundColor: 'transparent', // This could be 'transparent' or another suitable color.
+  },
+  textActive: {
+    color: 'white',
+  },
+  textInactive: {
+    color: 'black',
+  },
 });
+
+export default AuthPage;

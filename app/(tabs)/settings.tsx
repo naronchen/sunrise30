@@ -1,8 +1,9 @@
 import { tsNamedTupleMember } from '@babel/types';
 import { join } from 'path';
 import React from 'react'
-import { Text, View, StyleSheet,Dimensions, Image, Button } from 'react-native';
+import { Text, View, StyleSheet,Dimensions, Image, Button, TouchableOpacity } from 'react-native';
 import RectangularProgressBar from '@/components/progressBar';
+import supabase from '@/components/supabase';
 
 const profileMockObject = {
   name: 'Naron',
@@ -10,6 +11,10 @@ const profileMockObject = {
   profilePicture: '../../assets/images/penguine.jpg',
   strikeNumber: 3,
   completedDays: 5,
+}
+
+const handleLogout = async () => {
+  const { error } = await supabase.auth.signOut()
 }
 
 
@@ -55,7 +60,11 @@ export default function settings() {
           {/* <Text>{(profileMockObject.completedDays / 30 * 100).toFixed(2)}%</Text> */}
         </View>
       </View>
-      A log out button here
+      <TouchableOpacity
+          onPress={() => handleLogout()}
+          style={{ backgroundColor: '#FFC72E', padding: 8, borderRadius: 5, marginVertical: 5 }}>
+          <Text style={{ fontSize: 15, textAlign: 'center', color: 'white' }}>Log Out</Text>
+        </TouchableOpacity>
     </View>
   )
 }

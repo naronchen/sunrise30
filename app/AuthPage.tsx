@@ -12,9 +12,9 @@ const AuthPage: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{activePage === 'login' ? 'LogIn' : 'SignUp'}</Text>
+      <Text style={styles.title}>{activePage === 'login' ? 'Log In' : 'Sign Up'}</Text>
       <View style={styles.buttonContainer}>
-      <TouchableOpacity
+        <TouchableOpacity
           style={[styles.button, activePage === 'login' ? styles.buttonActive : styles.buttonInactive]}
           onPress={() => handleToggle('login')}
         >

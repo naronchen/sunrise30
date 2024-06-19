@@ -13,7 +13,7 @@ const SignupPage: React.FC = () => {
       Alert.alert("Error", "Passwords do not match");
       return;
     }
-
+    // I turned off Confirm Email
     setLoading(true);
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -55,7 +55,7 @@ const SignupPage: React.FC = () => {
         onPress={handleSignup}
         disabled={loading}
       >
-        <Text style={styles.buttonText}>{loading ? "Loading..." : "Log In"}</Text>
+        <Text style={styles.buttonText}>{loading ? "Loading..." : "Sign Up"}</Text>
       </Pressable>
 
     </View>

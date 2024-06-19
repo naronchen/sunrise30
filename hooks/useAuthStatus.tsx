@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import supabase from '@/components/supabase'; // Ensure this path matches your Supabase client setup
+import { User } from '@supabase/supabase-js';
 
-export default function useAuthStatus() {
-    const [user, setUser] = useState(null);
+export default function useAuthStatus(): User | null {
+    const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
         // Initially check if there is a current session and set the user
@@ -14,7 +15,6 @@ export default function useAuthStatus() {
                 setUser(session?.user ?? null);
             }
         );
-
         // Cleanup subscription on component unmount
         return () => {
             authListener.subscription.unsubscribe();
@@ -22,9 +22,16 @@ export default function useAuthStatus() {
     }, []);
 
     async function checkSession() {
-        const { data: session } = await supabase.auth.getSession();
-        setUser(session?.user ?? null);
+        const { data, error } = await supabase.auth.getSession();
+    
+        if (error) {
+            console.error('Error getting session:', error);
+            setUser(null);
+        } else {
+            setUser(data?.session?.user ?? null);
+        }
     }
+    
 
     return user;
 }

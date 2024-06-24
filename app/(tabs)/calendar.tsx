@@ -22,10 +22,11 @@ export default function calendar() {
           const calendar_data = new Array(30).fill(0);
           const {data: insertData, error: insertError} = await supabase
             .from('data')
-            .insert([{user_id: user?.id, calendar_track: calendar_data}])
+            .insert([{user_id: user?.id, calendar_track: calendar_data, startDate: new Date()}])
           setCalendarData(calendar_data)
         }
         else {
+          console.log(data[0].calendar_track)
           setCalendarData(data[0].calendar_track)
         }
       }
@@ -38,7 +39,7 @@ export default function calendar() {
   return (
     <MainView title="" style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
-        <Calendar />
+        <Calendar calendarData={calendarData}/>
       </SafeAreaView>
     </MainView>
       )

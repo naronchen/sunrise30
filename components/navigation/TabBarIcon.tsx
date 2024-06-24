@@ -5,10 +5,10 @@ import { type IconProps } from '@expo/vector-icons/build/createIconSet';
 import { type ComponentProps } from 'react';
 
 type TabBarIconProps = IconProps<ComponentProps<typeof Ionicons>['name']> & {
-  focused: boolean;  
+  focused?: boolean;  
 };
 
-export function TabBarIcon({ focused, style, ...rest }: TabBarIconProps) {
+export function TabBarIcon({ focused = false, style, ...rest }: TabBarIconProps) {
   return (
     <Ionicons 
       size={33} 

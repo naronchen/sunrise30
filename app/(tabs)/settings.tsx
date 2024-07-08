@@ -1,9 +1,10 @@
 import { tsNamedTupleMember } from '@babel/types';
 import { join } from 'path';
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import { Text, View, StyleSheet,Dimensions, Image, Button, TouchableOpacity } from 'react-native';
 import RectangularProgressBar from '@/components/progressBar';
 import supabase from '@/components/supabase';
+import { useFetchData } from '@/hooks/useFetchData';
 
 const profileMockObject = {
   name: 'Naron',
@@ -18,7 +19,50 @@ const handleLogout = async () => {
 }
 
 
+
 export default function settings() {
+  const { data, error } = useFetchData();
+  // const startDate:Date = new Date(data[0].startDate);
+
+  const calculateDatePosition = (startDate: Date) => {
+    const today:Date = new Date();
+    const differenceInMilliseconds = today.getTime() - startDate.getTime();
+    const differenceInDays = Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24));
+    return differenceInDays;
+  }
+
+  // const todayPosition = calculateDatePosition(new Date(data[0].startDate));
+  // console.log(todayPosition)
+
+  const [strike, setStrike] = useState(0);
+  const [startDate, setStartDate] = useState("2024 Jan 1");
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      setStrikeNumber();
+      setStartDate(data[0].startDate);
+
+    }
+  }, [data]);
+
+  const setStrikeNumber = () => {
+    const todayPosition = calculateDatePosition(new Date(data[0].startDate));
+    console.log(todayPosition, "today position");
+
+    // starting at todayPositionm, loop backwards to check calendar_track strike
+    let strike = 0;
+    for (let i = todayPosition; i >= 0; i--) {
+      if (data[0].calendar_track[i] === 1) {
+        strike++;
+      } else {
+        break;
+      }
+    }
+    setStrike(strike);
+  }
+
+
+
   return (
     <View style={styles.settingsContainer}>
       <View style={styles.profileContainer}>
@@ -30,7 +74,7 @@ export default function settings() {
           {profileMockObject.name}
           </Text>
         <Text style={styles.joinDateText}>
-          Joined {profileMockObject.joinDate}
+          Joined {startDate}
         </Text>
       </View>
 
@@ -42,7 +86,7 @@ export default function settings() {
           ></Image>
           <Text
             style={styles.streakText}
-          >{profileMockObject.strikeNumber}</Text>
+          >{strike}</Text>
         </View>
       </View>
 

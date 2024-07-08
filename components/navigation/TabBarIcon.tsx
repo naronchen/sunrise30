@@ -8,13 +8,14 @@ type TabBarIconProps = IconProps<ComponentProps<typeof Ionicons>['name']> & {
   focused?: boolean;  
 };
 
-export function TabBarIcon({ focused = false, style, ...rest }: TabBarIconProps) {
+export function TabBarIcon({ focused = false,style, ...rest }: TabBarIconProps) {
   return (
     <Ionicons 
-      size={33} 
       style={
         [
-          { marginBottom: -3 }, 
+          { marginBottom: -3. ,
+            fontSize:35,
+           }, 
           focused ? focusedShadowStyle : {},
           style
         ]} 

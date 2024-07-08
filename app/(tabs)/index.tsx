@@ -5,13 +5,14 @@ import CheckBox from '@/components/todayView/CheckBox';
 import CompletionModal from '@/components/CompletionModal';
 import supabase from '@/components/supabase';
 import useAuthStatus from '@/hooks/useAuthStatus';
-
+import { TabBarIcon } from '@/components/navigation/TabBarIcon';
+import { useFetchData } from '@/hooks/useFetchData';
 
 
 export default function dayView() {
-
   const user  = useAuthStatus();
-
+  const { data, error } = useFetchData();
+  
   const [isModalVisible, setModalVisible] = useState(false);
   const [isDoneToday, setIsDoneToday] = useState(false);
 
@@ -36,27 +37,12 @@ export default function dayView() {
   }
 
   useEffect(() => {
-    if (user?.id) {
-      fetchTodayCompletionStatus();
-    }
-  }, [user?.id, isModalVisible]);
-
-  const fetchTodayCompletionStatus = async () => {
-    
-    const { data, error } = await supabase
-      .from('data')
-      .select('calendar_track, startDate')
-      .eq('user_id', user?.id);
-
-    if (error) {
-      console.error('Error fetching today completion status:', error);
-    } else if (data && data.length > 0) {
+    if (data && data.length > 0) {
       const startDate = new Date(data[0].startDate);
       const differenceInDays = calculateDatePosition(startDate);
-      console.log("difference in days", differenceInDays);
       setIsDoneToday(data[0].calendar_track[differenceInDays] === 1);
     }
-  };
+  }, [data]);
 
   const calculateDatePosition = (startDate: Date) => {
     const today:Date = new Date();
@@ -66,13 +52,6 @@ export default function dayView() {
   }
 
   const finishedToday = async () => {
-   
-
-    const {data, error} = await supabase
-      .from('data')
-      .select('calendar_track, startDate')
-      .eq('user_id', user?.id)
-
     if (error) {
       console.error('Error fetching calendar data:', error)
     } else {
@@ -89,10 +68,13 @@ export default function dayView() {
 
   return (
   <MainView title="">
-    <View>
+    <View>  
       {
         isDoneToday ? (
-          <Text style={styles.doneText}>You are done!</Text>
+            <View style={styles.doneContainer}>
+              <TabBarIcon name='checkmark-circle' style={styles.doneIcon} />
+              {/* <Text style={styles.doneText}>You've completed today's tasks!</Text> */}
+            </View>
         ) : (
           checkItems.map((item, index) => (
             <CheckBox
@@ -116,14 +98,18 @@ export default function dayView() {
 }
 
 const styles = StyleSheet.create({
-  todayContainer: {
+  // doneText: {
+  //   marginTop: 20,
+  //   fontSize: 18,
+  //   color: 'green',
+  // },
+  doneContainer: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  doneText: {
-    marginTop: 20,
-    fontSize: 18,
-    color: 'green',
+  doneIcon: {
+    fontSize: 100,
+    color: '#66C2E9',
   },
 });

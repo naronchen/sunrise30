@@ -1,6 +1,7 @@
 import React from 'react'
 import { Tabs } from 'expo-router';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
+
 import useAuthStatus from '@/hooks/useAuthStatus';
 import AuthPage from '../AuthPage';
 
@@ -61,6 +62,7 @@ export default function TabLayout() {
                 )
             }}
         />
+
 
     </Tabs>
   )

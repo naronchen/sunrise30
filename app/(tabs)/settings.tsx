@@ -6,23 +6,18 @@ import RectangularProgressBar from '@/components/progressBar';
 import supabase from '@/components/supabase';
 import { useFetchData } from '@/hooks/useFetchData';
 import useAuthStatus  from "@/hooks/useAuthStatus";
+import { useNavigation } from 'expo-router';
+import { Link } from 'expo-router';
 
 
-const profileMockObject = {
-  name: 'Naron',
-  joinDate: '2024 May 14',
-  profilePicture: '../../assets/images/penguine.jpg',
-  strikeNumber: 3,
-  completedDays: 5,
-}
 
 const handleLogout = async () => {
   const { error } = await supabase.auth.signOut()
 }
 
-
-
 export default function settings() {
+  const navigation = useNavigation();
+  
   const user  = useAuthStatus();
   const { data, error } = useFetchData();
   // const startDate:Date = new Date(data[0].startDate);
@@ -109,11 +104,17 @@ export default function settings() {
           {/* <Text>{(profileMockObject.completedDays / 30 * 100).toFixed(2)}%</Text> */}
         </View>
       </View>
-      <TouchableOpacity
-          onPress={() => handleLogout()}
-          style={{ backgroundColor: '#FFC72E', padding: 8, borderRadius: 5, marginVertical: 5 }}>
-          <Text style={{ fontSize: 15, textAlign: 'center', color: 'white' }}>Log Out</Text>
-        </TouchableOpacity>
+      <View style ={styles.settingButtonContainer}>
+        <Link href="/DateSelection" style ={styles.settingsButton}>
+          <Text style={styles.settingText}>Reset Date</Text>
+        </Link>
+        <TouchableOpacity
+            onPress={() => handleLogout()}
+            style={styles.settingsButton}>
+            <Text style={styles.settingText}>Log Out</Text>
+          </TouchableOpacity>
+      </View>
+
     </View>
   )
 }
@@ -186,5 +187,17 @@ const styles = StyleSheet.create({
     fontWeight: 'semibold',
     color: '#FFC72E',
   },
+  settingButtonContainer: {
+    display: 'flex',
+    flexDirection:'row',
+    gap: 10,
+  },
+  settingsButton:
+  {
+     backgroundColor: '#FFC72E', padding: 8, borderRadius: 5, marginVertical: 5 
+  },
+  settingText: {
+    fontSize: 15, textAlign: 'center', color: 'white'
+  }
 
 });

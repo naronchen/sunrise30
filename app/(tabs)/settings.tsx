@@ -5,6 +5,8 @@ import { Text, View, StyleSheet,Dimensions, Image, Button, TouchableOpacity } fr
 import RectangularProgressBar from '@/components/progressBar';
 import supabase from '@/components/supabase';
 import { useFetchData } from '@/hooks/useFetchData';
+import useAuthStatus  from "@/hooks/useAuthStatus";
+
 
 const profileMockObject = {
   name: 'Naron',
@@ -21,6 +23,7 @@ const handleLogout = async () => {
 
 
 export default function settings() {
+  const user  = useAuthStatus();
   const { data, error } = useFetchData();
   // const startDate:Date = new Date(data[0].startDate);
 
@@ -36,9 +39,13 @@ export default function settings() {
 
   const [strike, setStrike] = useState(0);
   const [startDate, setStartDate] = useState("2024 Jan 1");
+  const [completedDays, setCompletedDays] = useState(0);
+
+  
 
   useEffect(() => {
     if (data && data.length > 0) {
+      setCompletedDays(data[0].calendar_track.reduce((acc:number, curr:number) => acc + curr, 0));
       setStrikeNumber();
       setStartDate(data[0].startDate);
 
@@ -71,7 +78,7 @@ export default function settings() {
           style={styles.profilePicture} 
         />
         <Text style={styles.nameText}>
-          {profileMockObject.name}
+          {user?.email}
           </Text>
         <Text style={styles.joinDateText}>
           Joined {startDate}
@@ -95,9 +102,7 @@ export default function settings() {
           <RectangularProgressBar
             totalRectangles={20}
             // filledRectangles={Math.floor(profileMockObject.completedDays / 30 * 20) }
-            completedDays={profileMockObject.completedDays}
-
-
+            completedDays={completedDays}
             rectangleColor="#FFC72E"
             height={25}
           />

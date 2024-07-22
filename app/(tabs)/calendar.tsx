@@ -13,8 +13,9 @@ export default function calendar() {
     const fetchCalendarData = async () => {
       const { data, error } = await supabase
         .from('data')
-        .select('calendar_track')
+        .select('calendar_track, startDate')
         .eq('user_id', user?.id)
+
       if (error) {
         console.error('Error fetching calendar data:', error)
       } else {
@@ -28,6 +29,11 @@ export default function calendar() {
         else {
           console.log(data[0].calendar_track)
           setCalendarData(data[0].calendar_track)
+          const diffInMs = new Date().getTime() - new Date(data[0].startDate).getTime();
+          const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+          if (diffInDays > 30){
+            console.log("resetting calendar")
+          }
         }
       }
     }

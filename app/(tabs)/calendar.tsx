@@ -29,7 +29,10 @@ export default function calendar() {
         else {
           console.log(data[0].calendar_track)
           setCalendarData(data[0].calendar_track)
-          const diffInMs = new Date().getTime() - new Date(data[0].startDate).getTime();
+          
+          const currentTime = new Date().setHours(-4, 0, 0, 0);
+
+          const diffInMs = currentTime - new Date(data[0].startDate).getTime();
           const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
           if (diffInDays > 30){
             console.log("resetting calendar")

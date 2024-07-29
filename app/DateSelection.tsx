@@ -5,10 +5,11 @@ import AuthPage from './AuthPage';
 import supabase from '@/components/supabase';
 import useAuthStatus from '@/hooks/useAuthStatus';
 import { useFetchData } from '@/hooks/useFetchData';
-
+import { Pressable } from 'react-native';
+import { Link } from 'expo-router';
 const DateSelection: React.FC = () => {
   const user = useAuthStatus();
-  const { data, error, loading } = useFetchData('your_table_name', 'startDate'); // Adjust table and column name
+  const { data, error, loading } = useFetchData('data', 'startDate'); // Adjust table and column name
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [show, setShow] = useState<boolean>(false);
 
@@ -22,15 +23,48 @@ const DateSelection: React.FC = () => {
       return;
     }
 
+    selectedDate.setHours(-4, 0, 0, 0);
+
+    const currentTime = new Date().setHours(-4, 0, 0, 0);
+    let diffInMs = currentTime - selectedDate.getTime();
+    let diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    if (diffInDays > 30){
+        Alert.alert("Start Date cant be more than 30 days in the past");
+        return;
+    }
+    const startDate = new Date(data[0].startDate);
+    diffInMs = startDate.getTime() - selectedDate.getTime();
+    diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+    console.log(diffInDays, "diff in days", selectedDate, startDate)
+    if (diffInDays < 0){
+        const calendar_data = new Array(30).fill(0);
+        const {data: insertData, error: insertError} = await supabase
+          .from('data')
+          .update({calendar_track: calendar_data})
+          .eq('user_id', user.id)
+    } else if (diffInDays >= 0){
+        if (Array.isArray(data) && data.length > 0 && data[0].calendar_track) {
+            const calendar_data = data[0].calendar_track.slice(diffInDays).concat(new Array(diffInDays).fill(0));
+            const {data: insertData, error: insertError} = await supabase
+              .from('data')
+              .update({calendar_track: calendar_data})
+              .eq('user_id', user.id)
+        }
+    }
+
+
     const { error } = await supabase
       .from('data') // Adjust table name
       .update({ startDate: selectedDate }) // Store as Date object
       .eq('user_id', user.id);
 
+
+
     if (error) {
       Alert.alert("Error updating date", error.message);
     } else {
-      Alert.alert("Date updated successfully");
+      Alert.alert("Date & Record updated successfully");
     }
   };
 
@@ -42,9 +76,11 @@ const DateSelection: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Select a Date</Text>
 
-      <Button title="Select Date" onPress={() => setShow(true)} />
+      <Pressable style={styles.settingsButton} onPress={() => setShow(true)} >
+        <Text style={styles.settingText}>Select Date</Text>
+      </Pressable>
+      
       {show && (
         <DateTimePicker
           value={selectedDate}
@@ -59,7 +95,13 @@ const DateSelection: React.FC = () => {
         Selected Date: {selectedDate.toDateString()}
       </Text>
 
-      <Button title="Confirm" onPress={handleConfirm} />
+      <Pressable style={styles.settingsButton} onPress={handleConfirm} >
+        <Link href="/settings"  onPress={handleConfirm}>
+            <Text style={styles.settingText}>Confirm</Text>
+        </Link>
+      </Pressable>
+      
+
     </View>
   );
 };
@@ -70,6 +112,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
+    gap: 16,
   },
   label: {
     fontSize: 18,
@@ -79,6 +122,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginVertical: 8,
   },
+  settingsButton:
+  {
+     backgroundColor: '#FFC72E', padding: 8, borderRadius: 5, marginVertical: 5 
+  },
+  settingText: {
+    fontSize: 15, textAlign: 'center', color: 'white'
+  }
 });
 
 export default DateSelection;

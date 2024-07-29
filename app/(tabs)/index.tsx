@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Text, StyleSheet, View } from 'react-native';
+import { Text, StyleSheet, View, Alert } from 'react-native';
 import MainView from '@/components/container/MainView';
 import CheckBox from '@/components/todayView/CheckBox';
 import CompletionModal from '@/components/CompletionModal';
@@ -59,7 +59,11 @@ export default function dayView() {
       const differenceInDays = calculateDatePosition(startDate);
       
       const calendarData = data[0].calendar_track;
-      calendarData[differenceInDays] = 1;
+      if (differenceInDays < 30 && differenceInDays >= 0) {
+        calendarData[differenceInDays] = 1;
+      } else {
+        Alert.alert("Just updated a day that is not in the 30-day range from startDate");
+      }
       const {data: insertData, error: insertError} = await supabase
         .from('data')
         .update({calendar_track: calendarData, isDoneToday: true})

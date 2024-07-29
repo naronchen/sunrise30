@@ -8,6 +8,7 @@ import { useFetchData } from '@/hooks/useFetchData';
 import useAuthStatus  from "@/hooks/useAuthStatus";
 import { useNavigation } from 'expo-router';
 import { Link } from 'expo-router';
+import { useIsFocused } from '@react-navigation/native';
 
 
 
@@ -16,11 +17,12 @@ const handleLogout = async () => {
 }
 
 export default function settings() {
-  const navigation = useNavigation();
   
   const user  = useAuthStatus();
-  const { data, error } = useFetchData();
   // const startDate:Date = new Date(data[0].startDate);
+  const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<any>(null);
 
   const calculateDatePosition = (startDate: Date) => {
     const today:Date = new Date();
@@ -35,8 +37,28 @@ export default function settings() {
   const [strike, setStrike] = useState(0);
   const [startDate, setStartDate] = useState("2024 Jan 1");
   const [completedDays, setCompletedDays] = useState(0);
+  const isFocused = useIsFocused();
 
-  
+  const fetchData = async () => {
+    setLoading(true);
+    if (user?.id) {
+      const { data, error } = await supabase
+        .from('data')
+        .select('startDate, calendar_track')
+        .eq('user_id', user.id);
+      if (error) {
+        setError(error);
+      } else {
+        setData(data);
+      }
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, [isFocused]);
+
+  // async update start Date!!!
 
   useEffect(() => {
     if (data && data.length > 0) {
@@ -76,7 +98,7 @@ export default function settings() {
           {user?.email}
           </Text>
         <Text style={styles.joinDateText}>
-          Joined {startDate}
+          Started {startDate}
         </Text>
       </View>
 
@@ -112,7 +134,7 @@ export default function settings() {
             onPress={() => handleLogout()}
             style={styles.settingsButton}>
             <Text style={styles.settingText}>Log Out</Text>
-          </TouchableOpacity>
+        </TouchableOpacity>
       </View>
 
     </View>

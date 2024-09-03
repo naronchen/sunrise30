@@ -26,45 +26,50 @@ const DateSelection: React.FC = () => {
     selectedDate.setHours(-4, 0, 0, 0);
 
     const currentTime = new Date().setHours(-4, 0, 0, 0);
-    let diffInMs = currentTime - selectedDate.getTime();
-    let diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+    // let diffInMs = currentTime - selectedDate.getTime();
+    // let diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
-    if (diffInDays > 30){
-        Alert.alert("Start Date cant be more than 30 days in the past");
-        return;
-    }
-    const startDate = new Date(data[0].startDate);
-    diffInMs = startDate.getTime() - selectedDate.getTime();
-    diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-    console.log(diffInDays, "diff in days", selectedDate, startDate)
-    if (diffInDays < 0){
-        const calendar_data = new Array(30).fill(0);
-        const {data: insertData, error: insertError} = await supabase
-          .from('data')
-          .update({calendar_track: calendar_data})
-          .eq('user_id', user.id)
-    } else if (diffInDays >= 0){
-        if (Array.isArray(data) && data.length > 0 && data[0].calendar_track) {
-            const calendar_data = data[0].calendar_track.slice(diffInDays).concat(new Array(diffInDays).fill(0));
-            const {data: insertData, error: insertError} = await supabase
-              .from('data')
-              .update({calendar_track: calendar_data})
-              .eq('user_id', user.id)
-        }
-    }
+    // if (diffInDays > 30){
+    //     Alert.alert("Start Date cant be more than 30 days in the past");
+    //     return;
+    // }
+    // const startDate = new Date(data[0].startDate);
+    // diffInMs = startDate.getTime() - selectedDate.getTime();
+    // diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+    // console.log(diffInDays, "diff in days", selectedDate, startDate)
+    // if (diffInDays < 0){
+    //     const calendar_data = new Array(30).fill(0);
+    //     const {data: insertData, error: insertError} = await supabase
+    //       .from('data')
+    //       .update({calendar_track: calendar_data})
+    //       .eq('user_id', user.id)
+    // } else if (diffInDays >= 0){
+    //     if (Array.isArray(data) && data.length > 0 && data[0].calendar_track) {
+    //         const calendar_data = data[0].calendar_track.slice(diffInDays).concat(new Array(diffInDays).fill(0));
+    //         const {data: insertData, error: insertError} = await supabase
+    //           .from('data')
+    //           .update({calendar_track: calendar_data})
+    //           .eq('user_id', user.id)
+    //     }
+    // }
 
 
-    const { error } = await supabase
-      .from('data') // Adjust table name
-      .update({ startDate: selectedDate }) // Store as Date object
-      .eq('user_id', user.id);
+    // const { error } = await supabase
+    //   .from('data') // Adjust table name
+    //   .update({ startDate: selectedDate }) // Store as Date object
+    //   .eq('user_id', user.id);
+    const calendar_data = new Array(30).fill(0);
+    const {data: insertData, error: insertError} = await supabase
+        .from('data')
+        .update({calendar_track: calendar_data, startDate: selectedDate})
+        .eq('user_id', user.id)
 
 
 
     if (error) {
       Alert.alert("Error updating date", error.message);
     } else {
-      Alert.alert("Date & Record updated successfully");
+      Alert.alert("Date Reset Success!" );
     }
   };
 
@@ -93,6 +98,10 @@ const DateSelection: React.FC = () => {
       {/* Display the selected date */}
       <Text style={styles.selectedDate}>
         Selected Date: {selectedDate.toDateString()}
+      </Text>
+
+      <Text style={styles.selectedDate}>
+        Once confirmed, the record will be reset.
       </Text>
 
       <Pressable style={styles.settingsButton} onPress={handleConfirm} >

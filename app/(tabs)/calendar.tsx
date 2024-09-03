@@ -19,7 +19,7 @@ export default function calendar() {
       if (error) {
         console.error('Error fetching calendar data:', error)
       } else {
-        if (data.length == 0){
+        if (data.length === 0 || !data[0].calendar_track){
           const calendar_data = new Array(30).fill(0);
           const {data: insertData, error: insertError} = await supabase
             .from('data')

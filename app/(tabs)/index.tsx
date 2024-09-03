@@ -11,7 +11,7 @@ import { useFetchData } from '@/hooks/useFetchData';
 
 export default function dayView() {
   const user  = useAuthStatus();
-  const { data, error } = useFetchData();
+  const [data, setData] = useState<any[]>([]);
   
   const [isModalVisible, setModalVisible] = useState(false);
   const [isDoneToday, setIsDoneToday] = useState(false);
@@ -35,19 +35,36 @@ export default function dayView() {
       setModalVisible(true);
     }
   }
+  const fetchData = async () => {
+    if (user?.id) {
+      const { data, error } = await supabase
+        .from('data')
+        .select('startDate, calendar_track, joinDate')
+        .eq('user_id', user.id);
+      if (error) {
+        console.error('Error fetching calendar data:', error)
+      }
+      else {
+        console.log(data, "data set | task page" )
+        const startDate = new Date(data[0].startDate);
+        const differenceInDays = calculateDatePosition(startDate);
+        setIsDoneToday(data[0].calendar_track[differenceInDays] === 1);
+      }
+    }
+  };
 
   useEffect(() => {
-    if (data && data.length > 0) {
-      const startDate = new Date(data[0].startDate);
-      const differenceInDays = calculateDatePosition(startDate);
-      setIsDoneToday(data[0].calendar_track[differenceInDays] === 1);
+    if (data.length == 0){
+      fetchData();
     }
-  }, [data]);
+  }, [user?.id, data]);
 
   const calculateDatePosition = (startDate: Date) => {
     const today:Date = new Date();
+    console.log(startDate, "start date", today, "today", "| task page")
     const differenceInMilliseconds = today.getTime() - startDate.getTime();
     const differenceInDays = Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24));
+    console.log(differenceInDays, "diff in days", "| task page")
     return differenceInDays;
   }
 
@@ -62,7 +79,7 @@ export default function dayView() {
       if (differenceInDays < 30 && differenceInDays >= 0) {
         calendarData[differenceInDays] = 1;
       } else {
-        Alert.alert("Just updated a day that is not in the 30-day range from startDate");
+        Alert.alert("Just updated ay that is not in the 30-day range from startDate");
       }
       const {data: insertData, error: insertError} = await supabase
         .from('data')

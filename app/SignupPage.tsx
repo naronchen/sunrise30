@@ -21,7 +21,6 @@ const SignupPage: React.FC = () => {
     });
     setLoading(false);
     if (error) Alert.alert("Signup Error", error.message);
-    else Alert.alert("Success", 'Sign up successful, check your email to confirm!');
   };
 
   return (

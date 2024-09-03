@@ -1,6 +1,6 @@
 import { tsNamedTupleMember } from '@babel/types';
 import { join } from 'path';
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useCallback} from 'react'
 import { Text, View, StyleSheet,Dimensions, Image, Button, TouchableOpacity } from 'react-native';
 import RectangularProgressBar from '@/components/progressBar';
 import supabase from '@/components/supabase';
@@ -9,7 +9,9 @@ import useAuthStatus  from "@/hooks/useAuthStatus";
 import { useNavigation } from 'expo-router';
 import { Link } from 'expo-router';
 import { useIsFocused } from '@react-navigation/native';
-
+import calendar from './calendar';
+import { TabBarIcon } from '@/components/navigation/TabBarIcon';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 const handleLogout = async () => {
@@ -35,48 +37,55 @@ export default function settings() {
   // console.log(todayPosition)
 
   const [strike, setStrike] = useState(0);
-  const [startDate, setStartDate] = useState("2024 Jan 1");
+  const [startDate, setStartDate] = useState("");
   const [completedDays, setCompletedDays] = useState(0);
-  const isFocused = useIsFocused();
+  const [joinDate, setJoinDate] = useState("");
 
   const fetchData = async () => {
     setLoading(true);
+    console.log(user?.id, "user id")
     if (user?.id) {
       const { data, error } = await supabase
         .from('data')
-        .select('startDate, calendar_track')
+        .select('startDate, calendar_track, joinDate')
         .eq('user_id', user.id);
       if (error) {
         setError(error);
       } else {
         setData(data);
+        console.log(data, "data set")
+        setCompletedDays(data[0].calendar_track.reduce((acc:number, curr:number) => acc + curr, 0));
+        setStartDate(data[0].startDate);
+        setStrikeNumber(new Date(data[0].startDate), data[0].calendar_track);
+        setJoinDate(data[0].joinDate);
       }
       setLoading(false);
     }
   };
-  useEffect(() => {
-    fetchData();
-  }, [isFocused]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (user) {
+        fetchData();
+      }
+    }, [user])
+  );
 
   // async update start Date!!!
 
   useEffect(() => {
-    if (data && data.length > 0) {
-      setCompletedDays(data[0].calendar_track.reduce((acc:number, curr:number) => acc + curr, 0));
-      setStrikeNumber();
-      setStartDate(data[0].startDate);
-
+    if (data.length == 0){
+      fetchData();
     }
-  }, [data]);
+  }, [user?.id, data]);
 
-  const setStrikeNumber = () => {
-    const todayPosition = calculateDatePosition(new Date(data[0].startDate));
-    console.log(todayPosition, "today position");
-
+  const setStrikeNumber = (_startDate: Date, calendar_data:Number[]) => {
+    const todayPosition = calculateDatePosition(_startDate);
+    console.log(todayPosition, "today position")
     // starting at todayPositionm, loop backwards to check calendar_track strike
     let strike = 0;
     for (let i = todayPosition; i >= 0; i--) {
-      if (data[0].calendar_track[i] === 1) {
+      if (calendar_data[i] === 1) {
         strike++;
       } else {
         break;
@@ -98,7 +107,7 @@ export default function settings() {
           {user?.email}
           </Text>
         <Text style={styles.joinDateText}>
-          Started {startDate}
+          started {startDate}
         </Text>
       </View>
 
@@ -128,7 +137,7 @@ export default function settings() {
       </View>
       <View style ={styles.settingButtonContainer}>
         <Link href="/DateSelection" style ={styles.settingsButton}>
-          <Text style={styles.settingText}>Reset Date</Text>
+          <Text style={styles.settingText}>Reset Start Date</Text>
         </Link>
         <TouchableOpacity
             onPress={() => handleLogout()}

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "327743443531",
+    "project_id": "newsunrise30",
+    "storage_bucket": "newsunrise30.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:327743443531:android:b5884135dd1e87486033ce",
+        "android_client_info": {
+          "package_name": "com.naronchen0.newSunrise30"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "327743443531-4e12872jqocpor2cch0fvmeh0ugaeiqr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.naronchen0.newSunrise30",
+            "certificate_hash": "e74bad4e487904e39745675a0c61aab0c85379b7"
+          }
+        },
+        {
+          "client_id": "327743443531-29og1qjg43uv056oo9i2kkiifsnq6hqa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7JaAjRxMfsapCU7HQXILChNnFVBCtZhw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "327743443531-29og1qjg43uv056oo9i2kkiifsnq6hqa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

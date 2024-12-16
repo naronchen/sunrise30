@@ -1,61 +1,46 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button } from 'react-native';
-import { GoogleSignin, GoogleSigninButton, SignInResponse } from "@react-native-google-signin/google-signin";
-import { useEffect, useState } from "react";
-
-
+import React, { useState, useEffect } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { GoogleSignin, SignInResponse, SignInSuccessResponse } from "@react-native-google-signin/google-signin";
+import AuthStack from "./navigation/AuthStack";
+import MainTabs from "./navigation/MainTabs";
 
 export default function App() {
-
-  const [error, setError] = useState<Error>();
-  const [userInfo, setUserInfo] = useState<SignInResponse | null>();
+  const [userInfo, setUserInfo] = useState<SignInSuccessResponse | null>(null);
 
   useEffect(() => {
     GoogleSignin.configure({
-      webClientId: '327743443531-29og1qjg43uv056oo9i2kkiifsnq6hqa.apps.googleusercontent.com', 
+      webClientId: "327743443531-29og1qjg43uv056oo9i2kkiifsnq6hqa.apps.googleusercontent.com",
     });
-  })
+  }, []);
 
-  const signin = async () => {
-    try{
-      await GoogleSignin.hasPlayServices();
-      const user = await GoogleSignin.signIn();
+  const isSignInSuccessResponse = (response: SignInResponse): response is SignInSuccessResponse => {
+    return (
+      response &&
+      response.data !== null && 
+      "user" in response.data
+    );
+  };
+  
+
+  const handleSignin = (user: SignInResponse) => {
+    if (isSignInSuccessResponse(user)) {
       setUserInfo(user);
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        console.log(e);
-        setError(e);
-      } else {
-        setError(new Error('An unknown error occurred'));
-      }
+    } else {
+      console.error("Invalid response: Not a SignInSuccessResponse");
     }
-  }
+  };
 
-  const logout = () => {
+  const handleLogout = () => {
     setUserInfo(null);
-    GoogleSignin.revokeAccess();
-    GoogleSignin.signOut();
-  }
-
+  };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      {/* <Text>{JSON.stringify(error)}</Text> */}
-      {/* {userInfo && <Text>{
-        JSON.stringify(userInfo)
-        }</Text>
-        } */}
+    <NavigationContainer>
       {userInfo ? (
-        <Button title="LogOut" onPress={logout} />
+        <MainTabs onLogout={handleLogout} userData={userInfo.data.user}/>
       ) : (
-        <GoogleSigninButton onPress={signin} color={GoogleSigninButton.Color.Dark} />
+        <AuthStack onSignin={handleSignin} />
       )}
-    </View>
+    </NavigationContainer>
   );
 }

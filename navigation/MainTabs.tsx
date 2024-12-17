@@ -10,7 +10,9 @@ const Tab = createBottomTabNavigator();
 const MainTabs = ({ onLogout, userData }: { onLogout: () => void; userData: any }) => (
   <Tab.Navigator>
     <Tab.Screen name="ToDo" component={ToDoScreen} />
-    <Tab.Screen name="Home" component={HomeScreen} />
+    <Tab.Screen name="Home">
+      {() => <HomeScreen userData={userData} />}
+    </Tab.Screen>
     <Tab.Screen name="Settings" >
       {() => <SettingsScreen onLogout={onLogout} userData={userData}/>}
     </Tab.Screen>

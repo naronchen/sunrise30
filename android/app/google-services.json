@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "327743443531-4e12872jqocpor2cch0fvmeh0ugaeiqr.apps.googleusercontent.com",
+          "client_id": "327743443531-veosvcn2252crqg78uar6n3i9del7k2r.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.naronchen0.newSunrise30",
-            "certificate_hash": "e74bad4e487904e39745675a0c61aab0c85379b7"
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
           }
         },
         {

@@ -1,29 +1,43 @@
 import firestore from '@react-native-firebase/firestore';
 
+
+
 // Retrieve or create a user in Firestore
-export const getOrCreateUser = async (userId: string, userData: { name: string; email: string, photo: string }) => {
+export const createUser = async (userId: string, userData: { name: string; email: string, photo: string }) => {
   try {
     const usersRef = firestore().collection('users');
     const userRef = usersRef.doc(userId);
-    const doc = await userRef.get();
 
-    if (!doc.exists) {
-      // Create a new user entry if it doesn't exist
-      const tracker = Array(30).fill(0);
+    const now = new Date();
+    const firestoreTimestamp = {
+      seconds: Math.floor(now.getTime() / 1000),
+      nanoseconds: (now.getTime() % 1000) * 1e6, 
+    };
+    
+    const tracker = Array(30).fill(0);
+    now.setHours(0, 0, 0, 0);
 
-      await userRef.set({
-        name: userData.name,
-        email: userData.email,
-        photo: userData.photo,
-        joinDate: firestore.FieldValue.serverTimestamp(),
-        dayTracker: tracker,
-      });
-      console.log('User added to Firestore');
-      return { name: userData.name, email: userData.email, joinDate: new Date().toISOString() };
-    } else {
-      console.log('User already exists in Firestore');
-      return doc.data();
-    }
+    await userRef.set({
+      id: userId,
+      name: userData.name,
+      email: userData.email,
+      photo: userData.photo,
+      joinDate: firestore.FieldValue.serverTimestamp(),
+      dayTracker: tracker,
+      startDate: now,
+    });
+    console.log('User added to Firestore');
+
+    return { 
+      id: userId, 
+      name: userData.name, 
+      email: userData.email, 
+      photo: userData.photo,
+      joinDate: firestoreTimestamp, 
+      dayTracker: tracker,
+      startDate: now
+    };
+
   } catch (error) {
     console.error('Error retrieving or creating user:', error);
     throw error;

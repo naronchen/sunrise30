@@ -16,7 +16,7 @@ const SettingsScreen = ({ onLogout, userData }: { onLogout: () => void; userData
     console.log(`Difference in days: ${differenceInDays}`);
 
   } else { 
-      console.error('Invalid joinDate format:', userData?.joinDate);
+      console.log('Invalid joinDate format:', userData?.joinDate);
   }
 
   

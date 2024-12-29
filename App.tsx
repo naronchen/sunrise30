@@ -4,7 +4,6 @@ import { GoogleSignin, SignInResponse, SignInSuccessResponse } from "@react-nati
 import AuthStack from "./navigation/AuthStack";
 import MainTabs from "./navigation/MainTabs";
 import { createUser, getUser } from "./services/firebaseUserService";
-import { MainTabsParamList } from "./navigation/MainTabs";
 
 export default function App() {
   const [userInfo, setUserInfo] = useState<SignInSuccessResponse | null>(null);
@@ -58,7 +57,6 @@ export default function App() {
         <MainTabs 
           onLogout={handleLogout} 
           userData={userData}
-          initialRoute={initialRoute as keyof MainTabsParamList}
         />
       ) : (
         <AuthStack onSignin={handleSignin} />

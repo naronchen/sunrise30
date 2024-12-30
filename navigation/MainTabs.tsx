@@ -11,16 +11,17 @@ export type MainTabsParamList = {
   Settings: undefined;
 };
 
-
-
 const Tab = createBottomTabNavigator<MainTabsParamList>();
 
-const MainTabs = ({ onLogout, userData }: { onLogout: () => void; userData: any }) => (
-  
-  <Tab.Navigator>
+const MainTabs = ({ onLogout, userData, updateUserData }: { 
+  onLogout: () => void; 
+  userData: any;
+  updateUserData: (newData: any) => void
+}) => (
+    <Tab.Navigator>
     {/* ToDo Screen */}
     <Tab.Screen name="ToDo">
-      {() => <ToDoScreen userData={userData} />}
+      {() => <ToDoScreen userData={userData} updateUserData={updateUserData} />}
     </Tab.Screen>
 
     {/* Home Screen */}
@@ -30,7 +31,11 @@ const MainTabs = ({ onLogout, userData }: { onLogout: () => void; userData: any 
 
     {/* Settings Screen */}
     <Tab.Screen name="Settings">
-      {() => <SettingsScreen onLogout={onLogout} userData={userData} />}
+      {() => <SettingsScreen 
+        onLogout={onLogout} 
+        userData={userData} 
+        updateUserData={updateUserData}
+      />}
     </Tab.Screen>
 
   </Tab.Navigator>

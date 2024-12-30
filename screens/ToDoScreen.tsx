@@ -4,9 +4,10 @@ import firestore from "@react-native-firebase/firestore";
 import { Checkbox } from "react-native-paper";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { MainTabsParamList } from "../navigation/MainTabs";
+import { calculateTodayPosition } from "../services/firebaseUserService";
 
 
-export default function ToDoScreen({ userData }: { userData: any }) {
+export default function ToDoScreen({ userData, updateUserData }: { userData: any, updateUserData: (newData: any) => void  }) {
   const [checked, setChecked] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation<NavigationProp<MainTabsParamList>>();
@@ -18,10 +19,10 @@ export default function ToDoScreen({ userData }: { userData: any }) {
     // Update the first element of the dayTracker array in Firestore
     try {
       const userRef = firestore().collection("users").doc(userData.id);
-      // console.log("Updating Firestore...");
-      // console.log(userData.id);
       const updatedDayTracker = [...userData.dayTracker];
-      updatedDayTracker[0] = 1; // Set the first element to 1
+      const todayPosition = calculateTodayPosition(userData.startDate);
+      updatedDayTracker[todayPosition] = 1;
+      updateUserData({ ...userData, dayTracker: updatedDayTracker });
       // console.log(updatedDayTracker);
       await userRef.update({ dayTracker: updatedDayTracker });
       console.log("DayTracker updated in Firestore");

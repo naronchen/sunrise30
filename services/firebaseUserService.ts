@@ -61,3 +61,20 @@ export const getUser = async (userId: string) => {
     throw error;
   }
 };
+
+export const calculateTodayPosition = (userData: any): number => {
+  const startDateObj = userData.startDate?.toDate 
+  ? userData.startDate.toDate() 
+  : userData.startDate;
+
+  if (!startDateObj) {
+    // handle the case where startDate is still undefined
+    return 0; // or some default
+  }
+  
+  const startDate = new Date(startDateObj.getFullYear(), startDateObj.getMonth(), startDateObj.getDate());
+  const today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+  const difInDays = (startDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+  console.log("Days since start date", difInDays);
+  return difInDays;
+}

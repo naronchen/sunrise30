@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, createNavigationContainerRef } from "@react-navigation/native";
 import { GoogleSignin, SignInResponse, SignInSuccessResponse } from "@react-native-google-signin/google-signin";
 import AuthStack from "./navigation/AuthStack";
-import MainTabs from "./navigation/MainTabs";
 import { createUser, getUser } from "./services/firebaseUserService";
+import RootStack from "./navigation/RootStack";
+import { navigationRef } from "./navigation/navRef";
 
 export default function App() {
   const [userInfo, setUserInfo] = useState<SignInSuccessResponse | null>(null);
   const [userData, setUserData] = useState<any | null>(null); // from firestore
-  const [initialRoute, setInitialRoute] = useState<string>("Home");
 
   useEffect(() => {
     GoogleSignin.configure({
@@ -23,7 +23,10 @@ export default function App() {
       "user" in response.data
     );
   };
-
+  
+  const updateUserData = (newData: any) => {
+    setUserData(newData);
+  }
 
   const handleSignin = async (user: SignInResponse) => {
     if (isSignInSuccessResponse(user)) {
@@ -37,11 +40,14 @@ export default function App() {
           email: user.data.user.email,
           photo: user.data.user.photo || "",
         });
-        setInitialRoute("SetStartDate");
-        console.log("initialRoute", initialRoute);
-      }
 
+        if (navigationRef.isReady()){
+          navigationRef.navigate("StartDate", {onLogout: handleLogout ,userData: firebaseUser, updateUserData: updateUserData});
+        }
+        console.log("New user set to true");
+      }
       setUserData(firebaseUser);
+      // setIsLoading(false);
     } else {
       console.error("Invalid response: Not a SignInSuccessResponse");
     }
@@ -52,12 +58,9 @@ export default function App() {
   };
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       {userInfo ? (
-        <MainTabs 
-          onLogout={handleLogout} 
-          userData={userData}
-        />
+        <RootStack userData={userData} onLogout={handleLogout} updateUserData={updateUserData}/>
       ) : (
         <AuthStack onSignin={handleSignin} />
       )}

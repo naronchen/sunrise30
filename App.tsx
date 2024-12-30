@@ -5,6 +5,7 @@ import AuthStack from "./navigation/AuthStack";
 import { createUser, getUser } from "./services/firebaseUserService";
 import RootStack from "./navigation/RootStack";
 import { navigationRef } from "./navigation/navRef";
+import auth from "@react-native-firebase/auth";
 
 export default function App() {
   const [userInfo, setUserInfo] = useState<SignInSuccessResponse | null>(null);
@@ -30,12 +31,21 @@ export default function App() {
 
   const handleSignin = async (user: SignInResponse) => {
     if (isSignInSuccessResponse(user)) {
+
+      // sign in with firebase to get the token for firestore security rules
+      const { idToken } = user.data;
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      const userCredentials = await auth().signInWithCredential(googleCredential);
+      console.log("firebasae user UID", userCredentials.user.uid);
+
       setUserInfo(user);
       console.log("User signed in:", user.data.user);
-      let firebaseUser = await getUser(user.data.user.id);
+      
+      let firebaseUser = await getUser(userCredentials.user.uid);
       console.log("firebaseUser Fetched", firebaseUser);
+
       if (firebaseUser == null){
-        firebaseUser = await createUser(user.data.user.id, {
+        firebaseUser = await createUser(userCredentials.user.uid, {
           name: user.data.user.name || "NA",
           email: user.data.user.email,
           photo: user.data.user.photo || "",

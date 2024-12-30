@@ -8,26 +8,48 @@ import { calculateTodayPosition } from "../services/firebaseUserService";
 
 
 export default function ToDoScreen({ userData, updateUserData }: { userData: any, updateUserData: (newData: any) => void  }) {
-  const [checked, setChecked] = useState(false);
+  // const [checked, setChecked] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [checkItems, setCheckItems] = useState([
+    { label: "Silence - Meditation", checked: false },
+    { label: "Affirmation", checked: false },
+    { label: "Visualization", checked: false },
+    { label: "Exercise", checked: false },
+    { label: "Reading", checked: false },
+    { label: "Scribing", checked: false },
+  ]);
+  
   const navigation = useNavigation<NavigationProp<MainTabsParamList>>();
 
-  const handleCheck = async () => {
-    setChecked(true); // Checkbox becomes checked
-    setModalVisible(true); // Show the modal
+  const handleCheck = async (index: number) => {
+    const updatedCheckItems = checkItems.map((item, i) => {
+      if (i === index){
+        return { ...item, checked: !item.checked };
+      }
+      return item;
+    })
+    setCheckItems(updatedCheckItems);
+    const allChecked = updatedCheckItems.every((item) => item.checked);
+    if (allChecked){
+      setModalVisible(true);
 
-    // Update the first element of the dayTracker array in Firestore
-    try {
-      const userRef = firestore().collection("users").doc(userData.id);
-      const updatedDayTracker = [...userData.dayTracker];
-      const todayPosition = calculateTodayPosition(userData.startDate);
-      updatedDayTracker[todayPosition] = 1;
-      updateUserData({ ...userData, dayTracker: updatedDayTracker });
-      // console.log(updatedDayTracker);
-      await userRef.update({ dayTracker: updatedDayTracker });
-      console.log("DayTracker updated in Firestore");
-    } catch (error) {
-      console.error("Failed to update Firestore:", error);
+      // update dayTracker in Firestore
+      try {
+        const userRef = firestore().collection("users").doc(userData.id);
+        const updatedDayTracker = [...userData.dayTracker];
+        const todayPosition = calculateTodayPosition(userData);
+        if (todayPosition < 0) {
+          console.error("Your StartDate is set after today");
+          return;
+        }
+        updatedDayTracker[todayPosition] = 1;
+        updateUserData({ ...userData, dayTracker: updatedDayTracker });
+        // console.log(updatedDayTracker);
+        await userRef.update({ dayTracker: updatedDayTracker });
+        console.log("DayTracker updated in Firestore");
+      } catch (error) {
+        console.error("Failed to update Firestore:", error);
+      }
     }
   };
 
@@ -39,14 +61,16 @@ export default function ToDoScreen({ userData, updateUserData }: { userData: any
   return (
     <View style={styles.container}>
       <Text style={styles.header}>ToDoScreen</Text>
-      <View style={styles.checkboxContainer}>
-        <Checkbox
-          status={checked ? "checked" : "unchecked"}
-          onPress={handleCheck}
-          color="#4CAF50"
-        />
-        <Text>Complete Task</Text>
-      </View>
+      { checkItems.map((item, index) => (
+        <View style={styles.checkboxContainer} key={index}>
+          <Checkbox
+            status={item.checked ? "checked" : "unchecked"}
+            onPress={() => handleCheck(index)}
+            color="#4CAF50"
+          />
+          <Text>{item.label}</Text>
+        </View>
+      ))}
 
       {/* Modal */}
       <Modal visible={modalVisible} transparent animationType="fade">

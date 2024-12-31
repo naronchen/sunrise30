@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { NavigationContainer, createNavigationContainerRef } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { GoogleSignin, SignInResponse, SignInSuccessResponse } from "@react-native-google-signin/google-signin";
 import AuthStack from "./navigation/AuthStack";
 import { createUser, getUser } from "./services/firebaseUserService";

@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, Text } from "react-native";
+import { View, Text, SafeAreaView, StyleSheet  } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import { useFocusEffect } from "@react-navigation/native";
+import Calendar from "../components/Calender";
+import MainView from "../components/MainView";
 
 
 const HomeScreen = ({ userData }: { userData: any }) => {
   console.log("userData", userData);
-  const [dayTracker, setDayTracker] = useState(userData?.dayTracker);
+  const [dayTracker, setDayTracker] = useState<number[]>(userData?.dayTracker || []);
 
   useFocusEffect(
     useCallback(() => {
@@ -34,11 +36,25 @@ const HomeScreen = ({ userData }: { userData: any }) => {
   
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Home Screen</Text>
-      <Text>DayTracker: {JSON.stringify(dayTracker)}</Text>
-    </View>
+    <MainView title="" style={styles.container}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <Calendar calendarData={dayTracker}/>
+      </SafeAreaView>
+    </MainView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingVertical: 40,
+  },
+  title: {
+    fontSize: 35,
+    fontWeight: 'bold',
+    marginVertical: 25,
+    marginLeft: 30,
+  }
+});
 
 export default HomeScreen;

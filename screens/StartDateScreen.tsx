@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-native-date-picker';
 import { View, Text, StyleSheet, Button } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
 import { navigationRef } from '../navigation/navRef';
 import firestore from '@react-native-firebase/firestore';
 

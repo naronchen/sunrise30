@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, SafeAreaView, StyleSheet  } from "react-native";
+import React, { useState, useCallback } from "react";
+import { SafeAreaView, StyleSheet  } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import { useFocusEffect } from "@react-navigation/native";
 import Calendar from "../components/Calender";

@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "327743443531-gk2739aaeh1nugr6v7c0b9mvbun6bt1m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.naronchen0.newSunrise30",
+            "certificate_hash": "d39e9f72828775306d0748f5aabf8ef772fa8f29"
+          }
+        },
+        {
           "client_id": "327743443531-vefvt1c7de1307dmn5dkc5jrkkrldobt.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

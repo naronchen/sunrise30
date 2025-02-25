@@ -1,0 +1,38 @@
+name: Android Release Build
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: set up JDK
+        uses: actions/setup-java@v3
+
+      - name: extract version from tag
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          echo "VERSION_NAME=${TAG_NAME#v}" >> $GITHUB_ENV
+
+      # - name: Increment Version Code
+      #   run: |
+      #       not sure what do run here
+
+      - name: Grant Gradle permissions
+        run: chmod +x gradlew
+      
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
+      
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: app/build/outputs/apk/release/*.apk

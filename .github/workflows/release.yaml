@@ -9,6 +9,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: android  # Set the default working directory for all run steps
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -22,7 +26,8 @@ jobs:
           echo "VERSION_NAME=${TAG_NAME#v}" >> $GITHUB_ENV
 
       # - name: Increment Version Code
-      #   run: |
+      #   run: | 
+      # @todo:
       #       not sure what do run here
 
       - name: Grant Gradle permissions
@@ -31,8 +36,20 @@ jobs:
       - name: Build Release APK
         run: ./gradlew assembleRelease
       
+      - name: Build Release AAB
+        run: ./gradlew bundleRelease
+      
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: release-apk
           path: app/build/outputs/apk/release/*.apk
+      
+      - name: Upload AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-aab
+          path: app/build/outputs/bundle/release/*.aab
+
+      # @todo: is there a way to automatically upload apk to play store?
+      # uses: r0adkll/upload-google-play@v1 ?
